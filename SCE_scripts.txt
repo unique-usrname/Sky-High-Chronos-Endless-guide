@@ -1,0 +1,34 @@
+Since script variables are in Japanese, the game should be opened with Japanese version of RPG Maker XP.
+https://rpgmakerofficial.com/product/products/trial.html
+
+Common Events
+022: 移動処理 - plane stats;
+              fuel consumption, acceleration, speed;
+              day count, game over on too many days passed;
+              Clover path final flight
+023: 計器破壊計算 - meters breaking and being repaired
+026: EXP振り分け - EXP assignment
+033: ウェイト管理 - weight and weight penalty
+069: 毎日アイテム - everyday items
+076: 会話イベント - dialog events at certain day count, unlocks down and up directions
+109: ゲームオーバー時の処理 - loop points; removes all items on game over
+119: 戦闘開始処理 - calls other scripts dealing with combat; Clover path final boss dialog
+120: ├敵パラメータ呼び出し - enemy types and distances of their spawn
+121: ├こっち攻撃 - player attack
+122: ├相手攻撃 - enemy attack
+124: ├エンカウント計算 - enemy encounter
+125: ├飛行機の性能チェック - plane stats after getting hit
+126: └ターン経過処理 - battle version of fuel consumption, acceleration, speed
+131-137: ドロップリスト：**** - item drop list
+138: 貴金属・宝石設定処理 - rare metals and jewelry drop list
+
+Scripts
+いいいいいいいいい - fuel consumption on Camellia's skills and flying up and down
+               game_variables
+                 41 - current fuel
+               game_switches
+                 41 - in battle
+                 82-83 - flying up
+                 84-85 - flying down
+                 210 - Camellia's "Zeppelin" active
+                 211 - Camellia's "Overclock" active

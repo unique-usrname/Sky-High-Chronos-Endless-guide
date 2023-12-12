@@ -1,0 +1,438 @@
+Original Japanese version
+http://kawasakibu.web.fc2.com/sce/index.html
+
+Original Developer
+https://mos.fanbox.cc
+https://twitter.com/sce2_dev
+
+English version
+https://not-worldtl.itch.io/sce
+https://rpgmaker.net/games/12633/
+
+
+
+The game writes a single save file to "Systemdata.rxdata" in the game folder.
+You should be making backups of this file because it can be corrupted if there is a power outage while saving.
+
+Further in the guide x..y is a random number from x to y, for example 1..100 is a random number from 1 to 100.
+
+
+
+Characters
+
+Character level allows to pick skills. PT determines how many skills can be active at once.
+Black and green skills must be activated to take effect, red and yellow don't.
+Max character level is 5. PT level is unlimited.
+Character experience required: 5k, 20k, 100k, 400k, 1000k.
+PT experience required: 20k, 60k, 180k, 540k, 1000k.
+Experience gained equals to peak distance reached during the flight.
+If a skill is carried over through loop, that skill doesn't cost a level, so the character will be able to get 6 skills.
+
+
+
+Items
+
+At every direction there are 5 distance ranges where an item can spawn.
+When starting a flight, an item is randomly generated at each distance range.
+The list of possible items is predetermined for each distance range.
+"Item Radar" allows to see the nearest item.
+Blueprint spawn formulas look like this
+  spawn a blueprint if
+  1..100 - blueprint_specific - Recipe_UP_bonus < 10
+  blueprint_specific is a number from 10 to 35 specific to each blueprint
+  if Apricot's "Recipe UP" is active, Recipe_UP_bonus is a number from 25 to 40 specific to each blueprint
+
+When reaching an item, there is a separate chance to grab it.
+The item is grabbed if
+  1..100 - Material_UP_bonus < item_specific_chance
+  Camellia's "Material UP"
+  1 +5..15
+  2 +10..25
+  3 +20..35
+  "Material UP" is not useful at story 9 because all items there have a high chance to be grabbed
+  item_specific_chance is around 50 for low tier blueprints, around 30 for high tier blueprints
+
+Woods spawn at lower-left and upper-right.
+Stones at upper-left and lower-right.
+Metals are everywhere.
+Rare metals and jewelry have a 10% chance to spawn at any range.
+The easiest way to get resources is to stack daily passive income skills:
+  "Standby Item Rank UP", "Standby Material UP", "Rare Metal UP" and "Jewelry UP".
+
+
+Item spawn ranges
+
+Up
+3k..11k
+23k..40k
+70k..100k
+130k..180k
+200k..400k
+
+Upper-left
+5k..15k
+25k..50k
+80k..120k
+150k..200k
+250k..400k
+
+Upper-right
+5k..15k
+25k..50k
+80k..120k
+150k..200k
+250k..400k
+
+Lower-left story 1
+0.5k..1.5k
+2.5k..4k
+5.5k..8k
+13k..17k
+25k..30k
+
+Lower-left story 2 or 3
+5.5k..8k
+13k..17k
+25k..30k
+40k..55k
+70k..90k
+
+Lower-right story 1
+0.6k..1.6k
+2.4k..4k
+5.5k..8.5k
+13k..18k
+30k..35k
+
+Lower-right story 2 or 3
+5.5k..8.5k
+13k..18k
+30k..35k
+40k..55k
+70k..90k
+
+Down story 1
+0.4k..1.2k
+2k..3k
+4.5k..6k
+8k..12k
+18k..25k
+
+Down story 2 or 3
+4.5k..6k
+8k..12k
+18k..25k
+35k..45k
+60k..80k OR 350k..450k
+
+Down story 9
+150k..300k
+400k..500k
+650k..800k
+800k..1000k
+1100k..1400k
+
+
+
+Modules
+
+Base max speed 50
+Base acceleration
+  1 when accelerating from 0 speed
+  4 when decelerating towards 0 speed
+  when out of fuel
+    if current_speed > 200, deceleration is current_speed/100
+    else deceleration is 2
+Camellia's "Overclock" *2 max speed, *2 acceleration
+
+Body parts max speed; weight
+1 +100; +60
+2 +200; +70
+3 +400; +80
+4 +600; +100
+5 +1000; +120
+
+Engine max_speed; acceleration; weight
+1 +150; +2; +80
+2 +300; +3; +100
+3 +500; +5; +120
+4 +800; +8; +160
+5 +1200; +15; +200
+
+Wings acceleration; weight
+1 +1; +30
+2 +3; +40
+3 +7; +50
+4 +10; +60
+5 +20; +70
+
+
+Weight support weight
+1 -50
+2 -100
+3 -200
+4 -300
+5 -400
+Camellia's "Weight Control" increases max weight by 100 and halves weight of all found items.
+
+
+Fuel consumption per "tick"
+  1 + up_down + Camellia_skills + 0..overweight_penalty
+  up_down
+    -1..0 if flying down
+    0..1 if flying up
+  Camellia_skills
+    "Zeppelin" -1 each second "tick", effectively -0.5
+    "Overclock" +1 each third "tick", effectively +0.33
+  overweight_penalty
+    1 if 0 < overweight < 100
+    overweight/100 if overweight > 100
+    If Apricot's "Weight Relief" is active, overweight_penalty is divided by 2
+    When dividing, all numbers are rounded toward zero
+    For example with weight 390 and "Weight Relief", there is 190 overweight
+      190/100 = 1.9, rounded to zero results in 1 base overweight penalty
+      applying "Weight Relief" 1/2 = 0.5, rounded to zero results in 0 total overweight penalty
+
+Base fuel 150
+
+Fuel tank fuel; weight
+1 +100; +40
+2 +200; +50
+3 +300; +60
+4 +400; +80
+5 +600; +100
+Canned Peaches - if out of fuel, add +50 fuel and the module is completely removed and must be crafted again, weight 20
+                 with Apricot's "Augmented Reserve Fuel", add additional +100 fuel
+
+
+Base number of attacks 1
+
+Weapons number of attacks; weight
+1 +1; +30
+2 +2; +40
+3 +3; +60
+4 +6; +80
+5 +10; +100
+
+flamethrower *2; +60
+  with flamethrower
+    each attack decreases fuel by 10
+    if out of fuel, number of attacks is set to 1
+
+Lacquer's "Attack UP" number of attacks
+1 +2
+2 +5
+3 *1.5 (multiply by 15 then divide by 10, round to zero)
+
+
+Autopilot - starts returning to base when fuel is less than 75%
+Warning Device - warns when fuel is less than 70%
+
+
+
+Blueprints
+
+Body parts
+1 available from start
+2 lower-left 25k..30k
+3 upper-right 5k..15k
+4 upper-right 250k..400k
+5 ending 4
+
+Engine
+1 down 4.5k..6k
+2 lower-right 30k..35k
+3 up 200k..400k
+4 ending 5
+5 reach story 9
+
+Wings
+1 available from start
+2 down 18k..25k
+3 upper-left 25k..50k
+4 upper-left 250k..400k
+5 ending 2
+
+Weight support
+1 lower-left story 1 ONLY, 0.5k..1.5k
+2 up 3k..11k
+3 upper-right 80k..120k
+4 up 130k..180k
+5 reach story 9
+
+Fuel tank
+1 lower-right story 1, 0.6k..1.6k OR reach story 2 or 3
+2 reach story 2 or 3
+3 up 70k..100k
+4 down story 2 or 3, 60k..80k
+5 reach story 9
+
+Weapons
+1 reach story 2 or 3
+2 upper-left 5k..15k
+3 lower-right story 2 or 3, 70k..90k
+4 Lacquer skill
+5 ending 3
+
+meters
+1-3 available from start
+Item Radar - Azalea skill
+Enemy Scanner - reach story 2 or 3
+
+other 1
+Autopilot - available from start
+Canned Peaches - lower-right 5.5k..8.5k
+Warning Device - lower-left 5.5k..8k
+Cat's eye - lower-right story 2 or 3, 40k..55k
+Radio - down story 2 or 3, 35k..45k
+
+other 2
+Bento - lower-left story 2 or 3, 40k..55k
+Accessory - upper-left 150k..200k
+Flamethrower - upper-right 25K..50k
+Paperweight - lower-left story 2 or 3, 70K..90k
+Endless Chrono - reach story 9 Clover path
+
+
+
+Meters breaking
+
+"Fuel Gauge", "Range Finder", "Speedometer" and "Item Radar" may break at all lower directions.
+Each "tick", break one of those 4 modules selected randomly if
+  0..25000 < meter_break_chance
+  meter_break_chance is initially 0
+  If a meter was broken, meter_break_chance is divided by 2
+  If a meter wasn't broken, meter_break_chance is increased by 1
+    If Camellia's "Meter Check" is active, that increase won't happen with a 50% chance
+If Camellia's "45 Degree Chop" is active, each "tick", go into "repair mode" if
+  0..100 == 0
+  When in "repair mode", each "tick", repair a meter of meter_id if
+    0..100 == meter_id
+    meter_id is a number from 0 to 3
+    If a meter is successfully repaired, go out of "repair mode" and divide meter_break_chance by 3
+
+
+
+Enemies
+
+Damage from enemies does not affect max weight and fuel.
+Enemies always break lower level modules first.
+If all damageable modules are broken, the next successful enemy attack destroys the plane.
+
+Each "tick", encounter a random available enemy if
+  0..30000 + Encounter_Reduction_bonus < encounter_chance
+  if Lacquer's "Encounter Reduction" is active, Encounter_Reduction_bonus is 0..5000
+  encounter_chance is initially 0, increased by 1..3 each "tick" and set to 0 after an encounter
+
+Enemy successfully hits if
+  1..100 + Evasion_UP_bonus < enemy_accuracy
+  Lacquer's "Evasion UP" bonus
+  1 +5..10
+  2 +10..20
+  3 +15..30
+
+When using Lacquer's "Flee", escape if
+  1..100 - Super_Escape_bonus < 25
+  if "Super Escape" is active, Super_Escape_bonus is 25..35
+Can't escape from the boss.
+
+Camellia's "Hindenburg" provides guaranteed escape but completely sacrifices a module, so it must be crafted again.
+Can't escape from the boss.
+
+Tori Bird appears at all upper directions.
+Other enemies only at upper-left and upper-right.
+
+Tori Bird
+accuracy: 30
+HP: 1..2
+attacks: 1
+distance: everywhere at upper-left and upper-right, <350k at up
+
+Option Hunter
+accuracy: 45
+HP: 5..8
+attacks: 2
+distance: >50k
+
+Dragon
+accuracy: 60
+HP: 11..16
+attacks: 3
+distance: >200k
+
+Kakapo (boss)
+accuracy: 100
+HP: 50
+attacks: 6
+distance: >340k
+
+
+
+Story progress
+
+Loop points
+1 died in story 1
+3 died in story 2
+5 did one of the 2-5 endings
+7 died in story 3
+10 died with Endless Chrono
+
+At first can fly only to lower-left and lower-right.
+At day 11 flying down is unlocked.
+At day 23 flying up is unlocked.
+Fly up, reach at least 14k and run out of fuel to get story 2.
+
+Endings
+2. Kill the boss at upper-left or upper-right.
+3. In story 2 fly up, reach at least 400k and run out of fuel.
+4. Reach day 180 OR pass 150 days since reaching story 2.
+5. Fly down, find "end fragment" and bring it back to base.
+     Appears at distance 350k..450k, weight 300.
+
+If did all endings 2-5 in previous loops, flying up will activate story 3:
+  no enemies, meters don't break, the only available ending is dying out of fuel.
+
+Final endings.
+In story 1 before day 6, fly left, right or down, reach at least 2000k and run out of fuel. Activates story 9.
+If did any of 2-5 ending in previous loops, get Clover path.
+Else get the boring version of story 9.
+
+Story 9 Clover path
+Final flight
+1. Reach 1000k to encounter the boss.
+2. Deal at least 9 damage in one combat turn and have 10 damageable modules to survive and get full repair.
+3. Reach at least 2000k and run out of fuel to get a refuel.
+4. Reach at least 3500k and have less than 200 fuel
+     to get all modules, max weight increase, and *17 boost to max speed and acceleration.
+5. Reach at least 20000k and run out fuel to get the ending.
+Launching the game after completing the Clover path gives an extra dialog.
+
+Story 9 boring path
+How to reach 2000k in 6 days with just 3 loop points without 2-5 endings.
+  In loop menu select engine 3, body 3, fuel 4.
+  Equip engine 3, fuel 4, "Range Meter".
+  Fly left or right, start to return at distance 60k, give all EXP to Camellia.
+  At day 2 Camellia must reach level 3.
+  Learn and activate "Weight Control", equip "Fuel Gauge" and "Speedometer".
+  Fly left or right, start to return at distance 120k, give all EXP to Camellia.
+  At day 5 Camellia must reach level 4.
+  Learn and activate "Zeppelin", equip body 3, unequip all meters.
+  Fly down. You should reach 2000k and get the boring version of story 9.
+Final flight
+Reach at least 7500k and run out fuel to get the ending.
+There is an extra text in Results.txt file after completing the boring version.
+
+
+
+Additional files
+
+In the GitHub repository of this guide there are cheat versions of "CommonEvents.rxdata".
+Sets base max speed and base acceleration to 100k.
+After getting hit by the enemy,
+  sets base max speed and base acceleration to 3k so Clover path final flight wouldn't be completely broken.
+EXP is assigned in chunks of 333333.
+Going to the next loop gives 99 of each resource.
+Saves should be compatible between cheat and non-cheat versions.
+In story 1, it's easy to accidentally activate story 9 by flying left, right or down till out of fuel.
+
+In the GitHub repository of this guide there is "SCE_scripts.txt" which lists notable game scripts.
